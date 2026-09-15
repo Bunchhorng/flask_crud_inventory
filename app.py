@@ -8,9 +8,15 @@ def dashboard():
     return render_template('layout/base.html')
 
 
-@app.route('/category')
+@app.route('/category', methods = ['GET', 'POST'])
 def index_category():
-    return render_template('category/index.html')
+    db =  connectDB()
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM categories')
+    categories = cursor.fetchall()
+    db.commit()
+    cursor.close()
+    return render_template('category/index.html', categories=categories)
 
 
 @app.route('/category/create', methods = ['GET', 'POST'])

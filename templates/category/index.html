@@ -60,8 +60,9 @@ endblock %} {% block page_title %} Categories {% endblock %} {% block content %}
       </thead>
 
       <tbody>
+        {% for cat in categories %}
         <tr>
-          <td class="ps-4 text-muted">1</td>
+          <td class="ps-4 text-muted">{{ loop.index }}</td>
 
           <td>
             <div class="d-flex align-items-center">
@@ -72,55 +73,13 @@ endblock %} {% block page_title %} Categories {% endblock %} {% block content %}
               </div>
 
               <div>
-                <div class="fw-semibold">Electronic</div>
-
-                <small class="text-muted"> Product category </small>
+                <div class="fw-semibold">{{ cat.name }}</div>
               </div>
             </div>
           </td>
 
           <td>
-            <span class="badge bg-success-subtle text-success"> Active </span>
-          </td>
-
-          <td class="text-end pe-4">
-            <div class="btn-group">
-              <a href="{{url_for('update_category')}}" class="btn btn-sm btn-outline-primary" title="Edit">
-                <i class="bi bi-pencil"></i>
-                Edit
-              </a>
-
-              <a href="" class="btn btn-sm btn-outline-danger" title="Delete">
-                <i class="bi bi-trash"></i>
-                Delete
-              </a>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Example second row -->
-
-        <tr>
-          <td class="ps-4 text-muted">2</td>
-
-          <td>
-            <div class="d-flex align-items-center">
-              <div
-                class="bg-primary bg-opacity-10 text-primary rounded p-2 me-3"
-              >
-                <i class="bi bi-tag fs-5"></i>
-              </div>
-
-              <div>
-                <div class="fw-semibold">Clothing</div>
-
-                <small class="text-muted"> Product category </small>
-              </div>
-            </div>
-          </td>
-
-          <td>
-            <span class="badge bg-success-subtle text-success"> Active </span>
+            <span class="badge bg-success-subtle text-success"> {{ cat.status }} </span>
           </td>
 
           <td class="text-end pe-4">
@@ -137,6 +96,7 @@ endblock %} {% block page_title %} Categories {% endblock %} {% block content %}
             </div>
           </td>
         </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
