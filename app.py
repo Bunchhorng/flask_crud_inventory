@@ -36,9 +36,32 @@ def create_category():
         return redirect(url_for('index_category'))
     return render_template('category/create.html')
 
-@app.route('/category/update')
-def update_category():
-    return render_template('category/update.html')
+@app.route('/category/update/<int:id>', methods = ['GET', 'POST'])
+def update_category(id):
+
+    db = connectDB()
+    cursor = db.cursor()
+
+    if request.method == 'POST':
+        newName = request.form['name']
+        newStatus = request.form['status']
+
+        sql = "UPDATE categories SET name=%s, status=%s WHERE id=%s"
+        cursor.execute(sql, (newName, newStatus, id))
+        db.commit()
+        cursor.close()
+        return redirect(url_for('index_category'))
+
+    cursor.execute("SELECT * FROM categories WHERE id=%s", (id,))
+    category = cursor.fetchone()
+    db.commit()
+    cursor.close()
+
+    if not category:
+        return "Category not Found"
+    
+    return render_template('category/update.html', category=category)
+
 
 
 # ============Product Route====

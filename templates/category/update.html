@@ -37,7 +37,7 @@
   <div class="card-body p-4">
     <form
       method="POST"
-      action="{{ url_for('update_category') }}"
+      action="{{ url_for('update_category', id=category.id) }}"
     >
       <!-- Category Name -->
       <div class="mb-4">
@@ -51,8 +51,7 @@
           class="form-control"
           id="name"
           name="name"
-          
-          placeholder="Enter category name"
+          value="{{category.name}}"
           required
         />
 
@@ -61,17 +60,21 @@
 
       <!-- Status -->
       <div class="mb-4">
-        <label for="status" class="form-label fw-semibold"> Status </label>
+        <label for="status" class="form-label fw-semibold">
+          Status
+        </label>
 
         <select class="form-select" id="status" name="status">
           <option
-           
+            value="Active"
+            {% if category.status == 'active' %}selected{% endif %}
           >
             Active
           </option>
 
           <option
-            
+            value="Inactive"
+            {% if category.status == 'inactive' %}selected{% endif %}
           >
             Inactive
           </option>
