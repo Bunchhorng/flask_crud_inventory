@@ -81,5 +81,9 @@ def index_product():
 def create_product():
     return render_template('product/create.html')
 
+@app.route('/product/update')
+def update_product():
+    return render_template('product/update.html')
+
 if __name__ == "__main__":
     app.run(debug=True)
