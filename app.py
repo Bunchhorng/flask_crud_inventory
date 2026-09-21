@@ -77,7 +77,9 @@ def delete_category(id):
 def index_product():
     return render_template('product/index.html')
 
-
+@app.route('/product')
+def create_product():
+    return render_template('product/create.html')
 
 if __name__ == "__main__":
     app.run(debug=True)
