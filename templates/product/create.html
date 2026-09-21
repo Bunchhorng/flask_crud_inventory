@@ -1,74 +1,126 @@
-{% extends 'layout/base.html' %} {% block title %}Create Category{% endblock %}
-{% block page_title %}Create Category{% endblock %} {% block content %}
+{% extends 'layout/base.html' %} 
 
+{% block title %}Add Product{% endblock %} 
+
+{% block page_title %}Product Management{% endblock %} 
+
+{% block content %}
 <!-- Page Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
   <div>
-    <h2 class="fw-bold mb-1">Create Category</h2>
-    <p class="text-muted mb-0">Add a new product category</p>
+    <h2 class="fw-bold mb-1">Add Product</h2>
+    <p class="text-muted mb-0">Create a new product in your catalog</p>
   </div>
 
-  <a href="{{ url_for('index_category') }}" class="btn btn-outline-secondary">
+  <a href="{{ url_for('index_product') }}" class="btn btn-outline-secondary">
     <i class="bi bi-arrow-left me-1"></i>
-    Back
+    Back to Products
   </a>
 </div>
 
-<!-- Create Form -->
+<!-- Form Card -->
 <div class="card border-0 shadow-sm">
-  <!-- Card Header -->
-  <div class="card-header bg-white border-0 p-4">
-    <h5 class="fw-semibold mb-1">Category Information</h5>
-
-    <p class="text-muted mb-0">Please enter the category details below.</p>
-  </div>
-
-  <!-- Form -->
-  <div class="card-body p-4">
-    <form method="POST" action="{{ url_for('create_category') }}">
-      <!-- Category Name -->
-      <div class="mb-4">
-        <label for="name" class="form-label fw-semibold">
-          Category Name
-          <span class="text-danger">*</span>
-        </label>
-
-        <input
-          type="text"
-          class="form-control"
-          id="name"
-          name="name"
-          placeholder="Enter category name"
+  <div class="card-body p-4 p-md-5">
+    <form action="{{ url_for('create_product') }}" method="POST" enctype="multipart/form-data">
+      
+      <!-- Product Name -->
+      <div class="mb-3">
+        <label for="name" class="form-label fw-semibold">Product Name <span class="text-danger">*</span></label>
+        <input 
+          type="text" 
+          class="form-control" 
+          id="name" 
+          name="name" 
+          placeholder="Enter product name..." 
+          maxlength="50"
           required
-        />
-
-        <div class="form-text">Example: Electronics, Clothing, Food</div>
+        >
+        <div class="form-text">Maximum 50 characters.</div>
       </div>
 
-      <!-- Status -->
+      <!-- Category and Price Row -->
+      <div class="row">
+        <!-- Category -->
+        <div class="col-md-6 mb-3">
+          <label for="category_id" class="form-label fw-semibold">Category</label>
+          <select class="form-select" id="category_id" name="category_id">
+            <option value="" selected disabled>Select category</option>
+            {% for cat in categories %}
+              <option value="{{ cat.id }}">{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Price -->
+        <div class="col-md-6 mb-3">
+          <label for="price" class="form-label fw-semibold">Price ($)</label>
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input 
+              type="number" 
+              step="0.01" 
+              min="0" 
+              class="form-control" 
+              id="price" 
+              name="price" 
+              placeholder="0.00" 
+              value="0.00"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Stock and Image Row -->
+      <div class="row">
+        <!-- Stock -->
+        <div class="col-md-6 mb-3">
+          <label for="stock" class="form-label fw-semibold">Stock Quantity</label>
+          <input 
+            type="number" 
+            min="0" 
+            class="form-control" 
+            id="stock" 
+            name="stock" 
+            placeholder="0" 
+            value="0"
+          >
+        </div>
+
+        <!-- Image/File Upload -->
+        <div class="col-md-6 mb-3">
+          <label for="image" class="form-label fw-semibold">Product Image URL / File</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="image" 
+            name="image" 
+            placeholder="Image filename or path..."
+          >
+          <div class="form-text">Enter image file name or link matching database.</div>
+        </div>
+      </div>
+
+      <!-- Description -->
       <div class="mb-4">
-        <label for="status" class="form-label fw-semibold"> Status </label>
-
-        <select class="form-select" id="status" name="status">
-          <option value="active" selected>Active</option>
-
-          <option value="inactive">Inactive</option>
-        </select>
+        <label for="description" class="form-label fw-semibold">Description</label>
+        <textarea 
+          class="form-control" 
+          id="description" 
+          name="description" 
+          rows="4" 
+          placeholder="Provide a detailed description of the product..."
+        ></textarea>
       </div>
 
-      <!-- Buttons -->
-      <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-primary">
-          <i class="bi bi-check-lg me-1"></i>
-          Save Category
+      <!-- Form Actions -->
+      <div class="d-flex justify-content-end gap-2">
+        <a href="{{ url_for('index_product') }}" class="btn btn-light px-4">Cancel</a>
+        <button type="submit" class="btn btn-primary px-4">
+          <i class="bi bi-check-lg me-1"></i> Save Product
         </button>
-
-        <a href="{{ url_for('index_category') }}" class="btn btn-light border">
-          Cancel
-        </a>
       </div>
+
     </form>
   </div>
 </div>
-
 {% endblock %}

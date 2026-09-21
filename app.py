@@ -77,7 +77,7 @@ def delete_category(id):
 def index_product():
     return render_template('product/index.html')
 
-@app.route('/product')
+@app.route('/product/create')
 def create_product():
     return render_template('product/create.html')
 
