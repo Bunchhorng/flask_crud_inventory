@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from connect import connectDB
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 
@@ -75,11 +77,63 @@ def delete_category(id):
 
 @app.route('/product')
 def index_product():
-    return render_template('product/index.html')
+    db = connectDB()
+    cursor = db.cursor()
+    products = cursor.execute("SELECT * FROM products")
+    db.commit()
+    cursor.close()
+    return render_template('product/index.html', products=products)
 
-@app.route('/product/create')
+
+UPLOAD_FOLDER = 'static/uploads/products'
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Create folder if it doesn't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@app.route('/product/create', methods=['GET', 'POST'])
 def create_product():
-    return render_template('product/create.html')
+    if request.method=="POST":
+        name = request.form['name']
+        price = request.form['price']
+        stock = request.form['stock']
+        description = request.form['description']
+        image = request.files.get('image')
+        category_id = request.form['category_id']
+
+        filename = None
+        if image and image.filename:
+            filename = secure_filename(image.filename)
+
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+            image.save(image_path)
+
+            db = connectDB()
+            cursor = db.cursor()
+            sql = "INSERT INTO products(name, price, stock, description, image, category_id)" \
+            "VALUES(%s, %s, %s, %s, %s, %s)"
+            cursor.execute(sql,(name, price, stock, description, filename, category_id))
+            db.commit()
+            cursor.close()
+            return redirect(url_for('index_product'))
+
+    db = connectDB()
+    cursor = db.cursor()
+    cursor.execute("""
+        SELECT id, name
+        FROM categories
+        ORDER BY name ASC
+    """)
+
+    categories = cursor.fetchall()
+
+    cursor.close()
+    return render_template(
+        'product/create.html',
+        categories=categories
+    )
 
 @app.route('/product/update')
 def update_product():
