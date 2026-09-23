@@ -79,7 +79,8 @@ def delete_category(id):
 def index_product():
     db = connectDB()
     cursor = db.cursor()
-    products = cursor.execute("SELECT * FROM products")
+    cursor.execute("SELECT * FROM products")
+    products = cursor.fetchall()
     db.commit()
     cursor.close()
     return render_template('product/index.html', products=products)
@@ -121,12 +122,7 @@ def create_product():
 
     db = connectDB()
     cursor = db.cursor()
-    cursor.execute("""
-        SELECT id, name
-        FROM categories
-        ORDER BY name ASC
-    """)
-
+    cursor.execute("SELECT * FROM categories")
     categories = cursor.fetchall()
 
     cursor.close()
