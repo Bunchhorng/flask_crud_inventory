@@ -131,9 +131,55 @@ def create_product():
         categories=categories
     )
 
-@app.route('/product/update')
-def update_product():
-    return render_template('product/update.html')
+@app.route('/product/update/<int:id>', methods=['GET', 'POST'])
+def update_product(id):
+    db = connectDB()
+    cursor = db.cursor()
+
+    if request.method=="POST":
+        newName = request.form['name']
+        newPrice = request.form['price']
+        newStock = request.form['stock']
+        newDescription = request.form['description']
+        category_id = request.form['category_id']
+        image = request.files.get('image')
+
+        cursor.execute('SELECT * FROM products WHERE id=%s', (id,))
+        product = cursor.fetchone()
+
+        filename = product['image']
+
+        if image and image.filename:
+            filename = secure_filename(image.filename)
+
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image.save(image_path)
+
+            sql = """
+                UPDATE products
+                SET name=%s, price=%s, stock=%s, description=%s,
+                image=%s, category_id=%s
+                WHERE id=%s
+            """
+
+            cursor.execute(sql, (
+                newName, newPrice, newStock, newDescription,
+                filename, category_id, id
+            ))
+
+            db.commit()
+            cursor.close()
+
+            return redirect(url_for('index_product'))
+
+    cursor.execute("SELECT * FROM products WHERE id=%s", (id,))
+    product = cursor.fetchone()
+
+    cursor.execute("SELECT * FROM categories")
+    categories = cursor.fetchall()
+
+    cursor.close()
+    return render_template('product/update.html', product=product, categories=categories)
 
 if __name__ == "__main__":
     app.run(debug=True)

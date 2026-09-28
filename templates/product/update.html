@@ -21,7 +21,7 @@
 <!-- Form Card -->
 <div class="card border-0 shadow-sm">
   <div class="card-body p-4 p-md-5">
-    <form action="{{ url_for('update_product') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ url_for('update_product', id = product.id) }}" method="POST" enctype="multipart/form-data">
       
       <!-- Product Name -->
       <div class="mb-3">
@@ -31,8 +31,7 @@
           class="form-control" 
           id="name" 
           name="name" 
-          value=""
-          placeholder="Enter product name..." 
+          value="{{product.name}}"
           maxlength="50"
           required
         >
@@ -44,13 +43,18 @@
         <!-- Category -->
         <div class="col-md-6 mb-3">
           <label for="category_id" class="form-label fw-semibold">Category</label>
-          <select class="form-select" id="category_id" name="category_id">
-            <option value="" disabled>Select category</option>
-              <option value="">
-                sdfghj
-              </option>
+
+          <select class="form-select" id="category_id" name="category_id" required>
+              <option value="" disabled>Select category</option>
+
+              {% for cat in categories %}
+                  <option value="{{ cat.id }}"
+                      {% if cat.id == product.category_id %}selected{% endif %}>
+                      {{ cat.name }}
+                  </option>
+              {% endfor %}
           </select>
-        </div>
+      </div>
 
         <!-- Price -->
         <div class="col-md-6 mb-3">
@@ -64,7 +68,7 @@
               class="form-control" 
               id="price" 
               name="price" 
-              value=""
+              value="{{product.price}}"
               placeholder="0.00"
             >
           </div>
@@ -82,7 +86,7 @@
             class="form-control" 
             id="stock" 
             name="stock" 
-            value=""
+            value="{{product.stock}}"
             placeholder="0"
           >
         </div>
@@ -100,6 +104,16 @@
           >
           <div class="form-text">Enter image file name or link matching database.</div>
         </div>
+        <!-- Current Image -->
+        <div>
+           {% if product.image %}
+              <img src="{{ url_for('static', filename='uploads/products/' ~ product.image) }}" alt="{{ product.name }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+            {% else %}
+              <div class="bg-primary bg-opacity-10 text-primary card-img-top d-flex align-items-center justify-content-center" style="height: 180px;">
+                <i class="bi bi-box-seam display-4"></i>
+              </div>
+            {% endif %}
+        </div>
       </div>
 
       <!-- Description -->
@@ -110,8 +124,7 @@
           id="description" 
           name="description" 
           rows="4" 
-          placeholder="Provide a detailed description of the product..."
-        ></textarea>
+        >{{product.description}}</textarea>
       </div>
 
       <!-- Form Actions -->
